@@ -1,0 +1,21 @@
+Roles
+  - project manager Matt.
+
+  - QA
+    - bugs
+    - code quality
+  - design
+
+  - tooling
+    trello
+    gitHubProject
+    asana
+    balsamiq.com
+    
+
+Expert
+  - git
+
+Questions:
+Who merging on gitHubProject
+
