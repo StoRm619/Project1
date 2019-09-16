@@ -24,39 +24,10 @@
 </head>
 
 <body>
-
-    <h1 class="site-heading text-center text-white d-none d-lg-block">
-        <span class="site-heading-upper text-primary mb-3">A Free Bootstrap 4 Business Theme</span>
-        <span class="site-heading-lower">Business Casual</span>
-    </h1>
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark py-lg-4" id="mainNav">
-        <div class="container">
-            <a class="navbar-brand text-uppercase text-expanded font-weight-bold d-lg-none" href="#">Start Bootstrap</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item active px-lg-4">
-                        <a class="nav-link text-uppercase text-expanded" href="index.html">Home
-                            <span class="sr-only">(current)</span>
-                        </a>
-                    </li>
-                    <li class="nav-item px-lg-4">
-                        <a class="nav-link text-uppercase text-expanded" href="about.html">About</a>
-                    </li>
-                    <li class="nav-item px-lg-4">
-                        <a class="nav-link text-uppercase text-expanded" href="products.html">Products</a>
-                    </li>
-                    <li class="nav-item px-lg-4">
-                        <a class="nav-link text-uppercase text-expanded" href="store.html">Store</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <!-- Background video -->
+    <video autoplay muted loop id="myVideo">
+            <source src="assets/Broll.mp4" type="video/mp4">
+        </video>
     <!-- Form and google map location -->
     <section class="page-section clearfix">
         <div class="container">
@@ -64,8 +35,8 @@
             <div class="row">
                 <!-- <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="img/intro.jpg" alt=""> -->
                 <!-- <div id="map" style="width: 200px; height: 200px;"></div> -->
-                <div class="intro-text left-0 text-center bg-faded p-2 rounded col-md-4">
-                    <div class="row">
+                <div class="intro-text left-0 text-center bg-faded p-5 rounded col-lg-5">
+                    <div class="row p-2">
 
                         <div class="form-group col-md-12">
                             <label for="pac-input" class="inputLabel">Current Location </label>
@@ -74,7 +45,7 @@
 
                     </div>
                     <!-- Form location -->
-                    <div class="row">
+                    <div class="row p-2">
 
                         <div class="form-group col-md-6">
                             <label for="inputType" class="inputLabel">Type of Food</label>
@@ -89,7 +60,7 @@
                             <input type="text" class="form-control" id="inputType">
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row p-2">
 
                         <div class="form-group col-md-6">
                             <label for="inputTrans" class="inputLabel">Transportation</label>
@@ -101,7 +72,7 @@
                         </div>
 
                     </div>
-                    <div class="row">
+                    <div class="row p-2">
                         <form class="inputContent">
 
                         </form>
@@ -110,7 +81,7 @@
                         <input class="btn btn-primary btn-xl" id="submit" type="button" value="Geocode">
                     </div>
                 </div>
-                <div class="col-md-8">
+                <div class="col-lg-7">
                     <div class="intro-img img-fluid mb-3 mb-lg-0 rounded" id="map">
                     </div>
                 </div>
