@@ -5,7 +5,7 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
+    <meta name="bdescription" content="">
     <meta name="author" content="">
 
     <title>Business Casual - Start Bootstrap Theme</title>
@@ -19,6 +19,7 @@
 
     <!-- Custom styles for this template -->
     <link href="css/business-casual.min.css" rel="stylesheet">
+    <link href="./assets/css/style.css" rel="stylesheet">
 
 </head>
 
@@ -61,18 +62,22 @@
         <div class="container">
             <!-- Google map location -->
             <div class="intro">
-                <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="img/intro.jpg" alt="">
+                <!-- <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="img/intro.jpg" alt=""> -->
+                <!-- <div id="map" style="width: 200px; height: 200px;"></div> -->
+                <div id="map" class="intro-img img-fluid mb-3 mb-lg-0 rounded" style="width: 200px; height: 200px"> </div>
+
                 <div class="intro-text left-0 text-center bg-faded p-5 rounded">
                     <div class="row">
 
                         <div class="form-group col-md-12">
-                            <label for="inputcurrent" class="inputLabel">Current Location </label>
-                            <input type="text" class="form-control" id="inputcurrent">
+                            <label for="pac-input" class="inputLabel">Current Location </label>
+                            <input type="text" class="form-control" id="pac-input">
                         </div>
 
                     </div>
                     <!-- Form location -->
                     <div class="row">
+
                         <div class="form-group col-md-6">
                             <label for="inputType" class="inputLabel">Type of Food</label>
                             <input type="text" class="form-control" id="inputType">
@@ -137,7 +142,9 @@
     <!-- Bootstrap core JavaScript -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
+    <script src="./assets/javascript/app.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAPvsAi7S9KWBd-JjrYX7xhFLEix8_fqF4&libraries=places&callback=initMap"
+    async defer></script>
 </body>
 
 </html>
