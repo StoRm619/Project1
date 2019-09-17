@@ -14,7 +14,9 @@
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom fonts for this template -->
-    <link href="https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700,700i" rel="stylesheet">
 
     <!-- Custom styles for this template -->
@@ -26,8 +28,8 @@
 <body>
     <!-- Background video -->
     <video autoplay muted loop id="myVideo">
-            <source src="assets/Broll.mp4" type="video/mp4">
-        </video>
+        <source src="assets/Broll.mp4" type="video/mp4">
+    </video>
     <!-- Form and google map location -->
     <section class="page-section clearfix">
         <div class="container">
@@ -53,32 +55,54 @@
                         </div>
                         <div class="form-group col-md-3">
                             <label for="inputType" class="inputLabel">Price</label>
-                            <input type="text" class="form-control" id="inputType">
+
+                            <select>
+                                <option value="$">$</option>
+                                <option value="$$">$$</option>
+                                <option value="$$$$">$$$$</option>
+       f                         <option value="$$$$">$$$$</option>
+                            </select>
                         </div>
                         <div class="form-group col-md-3">
                             <label for="inputType" class="inputLabel">Rating</label>
-                            <input type="text" class="form-control" id="inputType">
+
+                            <select>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
                         </div>
                     </div>
                     <div class="row p-2">
 
                         <div class="form-group col-md-6">
                             <label for="inputTrans" class="inputLabel">Transportation</label>
-                            <input type="text" class="form-control" id="inputTrans">
+
+                            <select>
+                                <option value="DRIVING">Car</option>
+                                <option value="BICYCLING">Bicycling</option>
+                                <option value="WALKING">Walking</option>
+                                <option value="TRANSIT">Transit</option>
+                            </select>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="inputTime" class="inputLabel">Travel Time</label>
-                            <input type="text" class="form-control" id="inputTime">
+
+                            <select>
+                                <option value="5-Miutes">5 minutes</option>
+                                <option value="10-minutes">10 minutes</option>
+                                <option value="15-minutes">15 minutes</option>
+                            </select>
                         </div>
 
                     </div>
                     <div class="row p-2">
-                        <form class="inputContent">
+                        <div class="intro-button mx-auto">
+                            <input class="btn btn-primary btn-xl" id="submit" type="button" value="Geocode">
+                        </div>
 
-                        </form>
-                    </div>
-                    <div class="intro-button mx-auto">
-                        <input class="btn btn-primary btn-xl" id="submit" type="button" value="Geocode">
                     </div>
                 </div>
                 <div class="col-lg-7">
@@ -101,7 +125,9 @@
                             <span class="section-heading-upper">Our Promise</span>
                             <span class="section-heading-lower">To You</span>
                         </h2>
-                        <p class="mb-0">When you walk into our shop to start your day, we are dedicated to providing you with friendly service, a welcoming atmosphere, and above all else, excellent products made with the highest quality ingredients. If you are not satisfied,
+                        <p class="mb-0">When you walk into our shop to start your day, we are dedicated to providing you
+                            with friendly service, a welcoming atmosphere, and above all else, excellent products made
+                            with the highest quality ingredients. If you are not satisfied,
                             please let us know and we will do whatever we can to make things right!</p>
                     </div>
                 </div>
@@ -119,7 +145,9 @@
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="./assets/javascript/app.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAPvsAi7S9KWBd-JjrYX7xhFLEix8_fqF4&libraries=places&callback=initMap" async defer></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAPvsAi7S9KWBd-JjrYX7xhFLEix8_fqF4&libraries=places&callback=initMap"
+        async defer></script>
 </body>
 
 </html>
