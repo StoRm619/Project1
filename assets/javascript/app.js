@@ -41,13 +41,13 @@ function initMap() {
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
   searchBox.addListener('places_changed', function() {
-    let places = searchBox.getPlaces();
+    let currentLocInput = searchBox.getPlaces();
 
-    if (places.length == 0)
+    if (currentLocInput.length == 0)
       return;
 
-    currentAdd = places[0].formatted_address;
-    let currentGeo = places[0].geometry
+    currentAdd = currentLocInput[0].formatted_address;
+    let currentGeo = currentLocInput[0].geometry
     let bounds = new google.maps.LatLngBounds();
     if (currentGeo.viewport)
       bounds.union(currentGeo.viewport);
