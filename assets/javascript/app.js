@@ -1,4 +1,4 @@
-const centerInit = {lat: -33.8688, lng: 151.2195};
+const centerInit = { lat: 32.8800604, lng: -117.2362022 };
 let infowindow;
 let places = [];
 let currentAdd = '';
@@ -18,12 +18,12 @@ function initMap() {
 
   service = new google.maps.places.PlacesService(map);
   service.nearbySearch(request, searchCallback);
-        
+
   //Call geocoder function and center on submit once address placed
   var geocoder = new google.maps.Geocoder();
 
   //submit id will be replaced by id of submit button on form
-  document.getElementById('submit').addEventListener('click', function() {
+  document.getElementById('submit').addEventListener('click', function () {
     geocodeAddress(geocoder, map);
   });
 
@@ -33,30 +33,28 @@ function initMap() {
 
 
   // Bias the SearchBox results towards current map's viewport.
-  map.addListener('bounds_changed', function() {
+  map.addListener('bounds_changed', function () {
     searchBox.setBounds(map.getBounds());
   });
 
   // var markers = [];
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
-  searchBox.addListener('places_changed', function() {
+  searchBox.addListener('places_changed', function () {
     let currentLocInput = searchBox.getPlaces();
 
     if (currentLocInput.length == 0)
       return;
 
     currentAdd = currentLocInput[0].formatted_address;
+
     let currentGeo = currentLocInput[0].geometry
     let bounds = new google.maps.LatLngBounds();
     if (currentGeo.viewport)
       bounds.union(currentGeo.viewport);
-    else 
+    else
       bounds.extend(currentGeo.location);
     map.fitBounds(bounds);
-
-    
-
 
     // // Clear out the old markers.
     // markers.forEach(function(marker) {
@@ -86,24 +84,66 @@ function initMap() {
     //     position: place.geometry.location
     //   }));
 
+    console.log(currentAdd)
+    console.log(places)
+    console.log(places[0].address)
+
+    var origin = currentAdd
+    var destination = places[0].address;
+    var selectTransporatation = document.getElementById("methodTransportation")
+    var userSelectMode = selectTransporatation.options[selectTransporatation.selectedIndex].value;
+
+    var service2 = new google.maps.DistanceMatrixService;
+    service2.getDistanceMatrix({
+      origins: [origin],
+      destinations: [destination],
+      travelMode: userSelectMode,
+      unitSystem: google.maps.UnitSystem.METRIC,
+      avoidHighways: false,
+      avoidTolls: false
+    }, function (response, status) {
+      if (status !== 'OK') {
+        alert('Error was: ' + status);
+      } else {
+        var originList = response.originAddresses;
+        var destinationList = response.destinationAddresses;
+
+        for (var i = 0; i < originList.length; i++) {
+          var results = response.rows[i].elements;
+          geocoder.geocode({ 'address': originList[i] });
+          for (var j = 0; j < results.length; j++) {
+            geocoder.geocode({ 'address': destinationList[j] });
+
+           console.log(results[j].duration.text)
+           console.log(results[j].distance.text)
+
+
+           
+          }
+        }
+
+      }
+    });
+
   });
+
 }
 
 //Function to call when we need to get location and center
 function geocodeAddress(geocoder, resultsMap) {
   //address id is going to be replaced by id of input on form
-var address = document.getElementById('address').value;
-geocoder.geocode({'address': address}, function(results, status) {
-  if (status === 'OK') {
-    resultsMap.setCenter(results[0].geometry.location);
-    var marker = new google.maps.Marker({
-      map: resultsMap,
-      position: results[0].geometry.location
-    });
-  } else {
-    alert('Geocode was not successful for the following reason: ' + status);
-  }
-});
+  var address = document.getElementById('address').value;
+  geocoder.geocode({ 'address': address }, function (results, status) {
+    if (status === 'OK') {
+      resultsMap.setCenter(results[0].geometry.location);
+      var marker = new google.maps.Marker({
+        map: resultsMap,
+        position: results[0].geometry.location
+      });
+    } else {
+      alert('Geocode was not successful for the following reason: ' + status);
+    }
+  });
 }
 
 function searchCallback(results, status) {
@@ -115,7 +155,6 @@ function searchCallback(results, status) {
       };
       service.getDetails(request, makeDetailCallback(places));
     }
-    console.log(places);
   }
 }
 
@@ -123,9 +162,11 @@ function searchCallback(results, status) {
 function makeDetailCallback(placesToModify) {
   return function detailCallback(results, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK)
-     placesToModify.push({
-       name: results.name,
-       address: results.formatted_address,
-       rating: results.rating});
+      placesToModify.push({
+        name: results.name,
+        address: results.formatted_address,
+        rating: results.rating
+      });
   }
+
 }
