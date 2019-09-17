@@ -123,13 +123,12 @@ function initMap() {
         var originList = response.originAddresses;
 
         for (var i = 0; i < originList.length; i++) {
-
           var results = response.rows[i].elements;
-          geocoder.geocode({ 'address': originList[i] });
+          geocoder.geocode({ 'address': originList[i] }, function(){});
           for (var j = 0; j < results.length; j++) {
-            geocoder.geocode({ 'address': destination[j] });
+            geocoder.geocode({ 'address': destination[j] }, function(){});
 
-            console.log(places[j])
+            console.log(places[j].name)
             console.log(results[j].duration.text)
             console.log(results[j].distance.text)
 
