@@ -37,7 +37,7 @@ function initMap() {
   // Create the search box and link it to the UI element.
   var input = document.getElementById('pac-input');
   var searchBox = new google.maps.places.SearchBox(input);
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
 
   // Bias the SearchBox results towards current map's viewport.
   map.addListener('bounds_changed', function() {
@@ -48,11 +48,12 @@ function initMap() {
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
   searchBox.addListener('places_changed', function() {
-    var places = searchBox.getPlaces();
+    let places = searchBox.getPlaces();
 
-    if (places.length == 0) {
-      return;
-    }
+    if (places.length == 0)
+      return;    
+    let currentPlace = places[0];
+    console.log(currentPlace, places.length);
 
     // Clear out the old markers.
     markers.forEach(function(marker) {
