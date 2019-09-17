@@ -19,12 +19,12 @@ function initMap() {
 
   service = new google.maps.places.PlacesService(map);
   service.nearbySearch(request, searchCallback);
-        
+
   //Call geocoder function and center on submit once address placed
   var geocoder = new google.maps.Geocoder();
 
   //submit id will be replaced by id of submit button on form
-  document.getElementById('submit').addEventListener('click', function() {
+  document.getElementById('submit').addEventListener('click', function () {
     // geocodeAddress(geocoder, map);
   });
 
@@ -38,11 +38,11 @@ function initMap() {
     searchBox.setBounds(map.getBounds());
   });
 
-  
+
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
 
-  searchBox.addListener('places_changed', function() {
+  searchBox.addListener('places_changed', function () {
     let currentLocInput = searchBox.getPlaces();
 
     if (currentLocInput.length == 0)
@@ -66,11 +66,6 @@ function initMap() {
       };
       service.nearbySearch(requestNearby, searchCallback);
     });
-
-
-
-    
-
 
     // // Clear out the old markers.
     // markers.forEach(function(marker) {
@@ -100,41 +95,44 @@ function initMap() {
     //     position: place.geometry.location
     //   }));
 
-    console.log(currentAdd)
-    console.log(places)
-    console.log(places[0].address)
-
     var origin = currentAdd
-    var destination = places[0].address;
+
+    //Pushing address values into destinations array for distance matrix calculations
+    var destination = [];
+    for (var h = 0; h < places.length; h++) {
+      destination.push(places[h].address)
+    }
+
     var selectTransporatation = document.getElementById("methodTransportation")
     var userSelectMode = selectTransporatation.options[selectTransporatation.selectedIndex].value;
 
     var service2 = new google.maps.DistanceMatrixService;
     service2.getDistanceMatrix({
       origins: [origin],
-      destinations: [destination],
+      destinations: destination,
+
       travelMode: userSelectMode,
       unitSystem: google.maps.UnitSystem.METRIC,
       avoidHighways: false,
       avoidTolls: false
     }, function (response, status) {
+
       if (status !== 'OK') {
         alert('Error was: ' + status);
       } else {
         var originList = response.originAddresses;
-        var destinationList = response.destinationAddresses;
 
         for (var i = 0; i < originList.length; i++) {
+
           var results = response.rows[i].elements;
           geocoder.geocode({ 'address': originList[i] });
           for (var j = 0; j < results.length; j++) {
-            geocoder.geocode({ 'address': destinationList[j] });
+            geocoder.geocode({ 'address': destination[j] });
 
-           console.log(results[j].duration.text)
-           console.log(results[j].distance.text)
+            console.log(places[j])
+            console.log(results[j].duration.text)
+            console.log(results[j].distance.text)
 
-
-           
           }
         }
 
@@ -162,18 +160,18 @@ function geocodeAddress(geocoder, resultsMap) {
   });
 }
 
-  function searchCallback(results, status) {
-    if (status == google.maps.places.PlacesServiceStatus.OK) {
-      for (var i = 0; i < results.length; i++) {
-        let request = {
-          placeId: results[i].place_id,
-          fields: ['name', 'rating', 'formatted_address']
-        };
-        service.getDetails(request, makeDetailCallback(places));
-      }
-      console.log('SearchCallback, places:', places);
+function searchCallback(results, status) {
+  if (status == google.maps.places.PlacesServiceStatus.OK) {
+    for (var i = 0; i < results.length; i++) {
+      let request = {
+        placeId: results[i].place_id,
+        fields: ['name', 'rating', 'formatted_address']
+      };
+      service.getDetails(request, makeDetailCallback(places));
     }
+    console.log('SearchCallback, places:', places);
   }
+}
 
 
 // We've implemented this different way. Just saving for now.
@@ -210,7 +208,7 @@ function makeDetailCallback(placesToModify) {
 
 function geocodeAddress(address, callback) {
   var geocoder = new google.maps.Geocoder();
-  geocoder.geocode({'address': address}, function(results, status) {
+  geocoder.geocode({ 'address': address }, function (results, status) {
     if (status === 'OK') {
       currentLatLng = results[0].geometry.location;
       console.log('Geocoding: ', currentLatLng);
