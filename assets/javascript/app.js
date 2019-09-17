@@ -1,5 +1,6 @@
 const centerInit = {lat: -33.8688, lng: 151.2195};
 let infowindow;
+let places = [];
 
 function initMap() {
   var map = new google.maps.Map(document.getElementById('map'), {
@@ -7,10 +8,6 @@ function initMap() {
     zoom: 13,
     mapTypeId: 'roadmap'
   });
-
-  // var pyrmont = new google.maps.LatLng(-33.8665433, 151.1956316);
-
-  infowindow = new google.maps.InfoWindow();
 
   var request = {
     location: centerInit,
@@ -20,11 +17,6 @@ function initMap() {
 
   service = new google.maps.places.PlacesService(map);
   service.nearbySearch(request, searchCallback);
-
-
-
-
-  // -------------------------------
         
   //Call geocoder function and center on submit once address placed
   var geocoder = new google.maps.Geocoder();
@@ -115,8 +107,23 @@ geocoder.geocode({'address': address}, function(results, status) {
 function searchCallback(results, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
     for (var i = 0; i < results.length; i++) {
-      console.log(results[i].name, 'Rating: ', results[i].rating);
-      // createMarker(results[i]);
+      let request = {
+        placeId: results[i].place_id,
+        fields: ['name', 'rating', 'formatted_address']
+      };
+      service.getDetails(request, makeDetailCallback(places));
     }
+    console.log(places);
+  }
+}
+
+// Modifies places by adding details to passin in placesToModify argument
+function makeDetailCallback(placesToModify) {
+  return function detailCallback(results, status) {
+    if (status == google.maps.places.PlacesServiceStatus.OK)
+     placesToModify.push({
+       name: results.name,
+       address: results.formatted_address,
+       rating: results.rating});
   }
 }
