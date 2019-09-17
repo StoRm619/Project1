@@ -1,4 +1,4 @@
-const centerInit = {lat: -33.8688, lng: 151.2195};
+const centerInit = { lat: 32.8800604, lng: -117.2362022 };
 let infowindow;
 let places = [];
 let currentAdd = '';
@@ -10,7 +10,15 @@ function initMap() {
     zoom: 13,
     mapTypeId: 'roadmap'
   });
-  let service = new google.maps.places.PlacesService(map);
+
+  var request = {
+    location: centerInit,
+    radius: '500',
+    type: ['restaurant']
+  };
+
+  service = new google.maps.places.PlacesService(map);
+  service.nearbySearch(request, searchCallback);
         
   //Call geocoder function and center on submit once address placed
   var geocoder = new google.maps.Geocoder();
@@ -26,7 +34,7 @@ function initMap() {
 
 
   // Bias the SearchBox results towards current map's viewport.
-  map.addListener('bounds_changed', function() {
+  map.addListener('bounds_changed', function () {
     searchBox.setBounds(map.getBounds());
   });
 
@@ -45,7 +53,7 @@ function initMap() {
     let bounds = new google.maps.LatLngBounds();
     if (currentGeo.viewport)
       bounds.union(currentGeo.viewport);
-    else 
+    else
       bounds.extend(currentGeo.location);
     map.fitBounds(bounds);
 
@@ -92,7 +100,67 @@ function initMap() {
     //     position: place.geometry.location
     //   }));
 
+    console.log(currentAdd)
+    console.log(places)
+    console.log(places[0].address)
+
+    var origin = currentAdd
+    var destination = places[0].address;
+    var selectTransporatation = document.getElementById("methodTransportation")
+    var userSelectMode = selectTransporatation.options[selectTransporatation.selectedIndex].value;
+
+    var service2 = new google.maps.DistanceMatrixService;
+    service2.getDistanceMatrix({
+      origins: [origin],
+      destinations: [destination],
+      travelMode: userSelectMode,
+      unitSystem: google.maps.UnitSystem.METRIC,
+      avoidHighways: false,
+      avoidTolls: false
+    }, function (response, status) {
+      if (status !== 'OK') {
+        alert('Error was: ' + status);
+      } else {
+        var originList = response.originAddresses;
+        var destinationList = response.destinationAddresses;
+
+        for (var i = 0; i < originList.length; i++) {
+          var results = response.rows[i].elements;
+          geocoder.geocode({ 'address': originList[i] });
+          for (var j = 0; j < results.length; j++) {
+            geocoder.geocode({ 'address': destinationList[j] });
+
+           console.log(results[j].duration.text)
+           console.log(results[j].distance.text)
+
+
+           
+          }
+        }
+
+      }
+    });
+
   });
+
+}
+
+//Function to call when we need to get location and center
+function geocodeAddress(geocoder, resultsMap) {
+  //address id is going to be replaced by id of input on form
+  var address = document.getElementById('address').value;
+  geocoder.geocode({ 'address': address }, function (results, status) {
+    if (status === 'OK') {
+      resultsMap.setCenter(results[0].geometry.location);
+      var marker = new google.maps.Marker({
+        map: resultsMap,
+        position: results[0].geometry.location
+      });
+    } else {
+      alert('Geocode was not successful for the following reason: ' + status);
+    }
+  });
+}
 
   function searchCallback(results, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK) {
@@ -106,7 +174,6 @@ function initMap() {
       console.log('SearchCallback, places:', places);
     }
   }
-}
 
 
 // We've implemented this different way. Just saving for now.
@@ -133,10 +200,11 @@ function initMap() {
 function makeDetailCallback(placesToModify) {
   return function detailCallback(results, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK)
-     placesToModify.push({
-       name: results.name,
-       address: results.formatted_address,
-       rating: results.rating});
+      placesToModify.push({
+        name: results.name,
+        address: results.formatted_address,
+        rating: results.rating
+      });
   }
 }
 
