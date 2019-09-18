@@ -132,6 +132,7 @@ function getTravelTime() {
 
                         console.log(places[j].name)
                         console.log(results[j].duration.text)
+
                         console.log(results[j].distance.text)
                         var newRow = $("<tr>").append(
                             $("<td>").text(places[j].name),
