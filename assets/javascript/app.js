@@ -43,8 +43,15 @@ function initMap() {
 
     geocodeAddress(currentAdd, callSearchNearby);
   });
+
+  $('#submit').on('click', filterResults);
 }
 
+function filterResults() {
+  if (currentAdd) {
+    geocodeAddress(currentAdd, callSearchNearby);
+  }
+};
 function callSearchNearby(latLng) {
   let requestNearby = {
     location: latLng,
