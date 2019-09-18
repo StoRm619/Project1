@@ -45,6 +45,12 @@ function initMap() {
     });
 }
 
+function filterResults() {
+    if (currentAdd) {
+        geocodeAddress(currentAdd, callSearchNearby);
+    }
+};
+
 function callSearchNearby(latLng) {
     let requestNearby = {
         location: latLng,
