@@ -121,9 +121,24 @@ function getTravelTime() {
 
         for (var i = 0; i < originList.length; i++) {
           var results = response.rows[i].elements;
+
           for (var j = 0; j < results.length; j++) {
-            console.log(places[j].name);
-            console.log(results[j].duration.text);
+          
+
+            console.log(places[j].name)
+            console.log(results[j].duration.text)
+            console.log(results[j].distance.text)
+            var newRow = $("<tr>").append(
+              $("<td>").text(places[j].name),
+              $("<td>").text(places[j].price),
+              $("<td>").text(places[j].rating),
+              $("<td>").text(results[j].duration.text),
+              $("<td>").text(places[j].address),
+              
+            );
+            //Appending all of new div to html of page
+            $("#resultsDisplay").append(newRow)
+
           }
         }
       }
