@@ -124,13 +124,27 @@ function initMap() {
 
         for (var i = 0; i < originList.length; i++) {
           var results = response.rows[i].elements;
-          geocoder.geocode({ 'address': originList[i] }, function(){});
+          geocoder.geocode({ 'address': originList[i] }, function () { });
           for (var j = 0; j < results.length; j++) {
-            geocoder.geocode({ 'address': destination[j] }, function(){});
+            geocoder.geocode({ 'address': destination[j] }, function () { });
 
             console.log(places[j].name)
             console.log(results[j].duration.text)
             console.log(results[j].distance.text)
+            var newRow = $("<tr>").append(
+              $("<td>").text(places[j].name),
+              $("<td>").text(places[j].price),
+              $("<td>").text(places[j].rating),
+              $("<td>").text(results[j].duration.text),
+              $("<td>").text(places[j].address),
+              
+            );
+            //Appending all of new div to html of page
+            $("#resultsDisplay").append(newRow)
+
+
+
+
 
           }
         }
@@ -164,7 +178,7 @@ function searchCallback(results, status) {
     for (var i = 0; i < results.length; i++) {
       let request = {
         placeId: results[i].place_id,
-        fields: ['name', 'rating', 'formatted_address']
+        fields: ['name', 'rating', 'formatted_address', 'photo', 'price_level', 'url']
       };
       service.getDetails(request, makeDetailCallback(places));
     }
@@ -200,7 +214,9 @@ function makeDetailCallback(placesToModify) {
       placesToModify.push({
         name: results.name,
         address: results.formatted_address,
-        rating: results.rating
+        rating: results.rating,
+        price: results.price_level,
+        url: results.url
       });
   }
 }
