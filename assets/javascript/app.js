@@ -58,85 +58,70 @@ function initMap() {
     map.fitBounds(bounds);
 
 
-    geocodeAddress(currentAdd, function (latLng) {
-      let requestNearby = {
-        location: latLng,
-        radius: '500',
-        type: ['restaurant']
-      };
-      service.nearbySearch(requestNearby, searchCallback);
-    });
-
-
-    var origin = currentAdd
-
-    //Pushing address values into destinations array for distance matrix calculations
-    var destination = [];
-    for (var h = 0; h < places.length; h++) {
-      destination.push(places[h].address)
-    }
-
-    var selectTransporatation = document.getElementById("methodTransportation")
-    var userSelectMode = selectTransporatation.options[selectTransporatation.selectedIndex].value;
-
-    var service2 = new google.maps.DistanceMatrixService;
-    service2.getDistanceMatrix({
-      origins: [origin],
-      destinations: destination,
-
-      travelMode: userSelectMode,
-      unitSystem: google.maps.UnitSystem.METRIC,
-      avoidHighways: false,
-      avoidTolls: false
-    }, function (response, status) {
-
-      if (status !== 'OK') {
-        alert('Error was: ' + status);
-      } else {
-        var originList = response.originAddresses;
-
-        for (var i = 0; i < originList.length; i++) {
-          var results = response.rows[i].elements;
-          geocoder.geocode({ 'address': originList[i] }, function(){});
-          for (var j = 0; j < results.length; j++) {
-            geocoder.geocode({ 'address': destination[j] }, function(){});
-
-            console.log(places[j].name)
-            console.log(results[j].duration.text)
-            console.log(results[j].distance.text)
-
-          }
-        }
-
+    geocodeAddress(currentAdd, callSearchNearby);
+      
+      
+      var origin = currentAdd
+      
+      //Pushing address values into destinations array for distance matrix calculations
+      var destination = [];
+      for (var h = 0; h < places.length; h++) {
+        destination.push(places[h].address)
       }
+      
+      var selectTransporatation = document.getElementById("methodTransportation")
+      var userSelectMode = selectTransporatation.options[selectTransporatation.selectedIndex].value;
+      
+      var service2 = new google.maps.DistanceMatrixService;
+      service2.getDistanceMatrix({
+        origins: [origin],
+        destinations: destination,
+        
+        travelMode: userSelectMode,
+        unitSystem: google.maps.UnitSystem.METRIC,
+        avoidHighways: false,
+        avoidTolls: false
+      }, function (response, status) {
+        
+        if (status !== 'OK') {
+          alert('Error was: ' + status);
+        } else {
+          var originList = response.originAddresses;
+          
+          for (var i = 0; i < originList.length; i++) {
+            var results = response.rows[i].elements;
+            geocoder.geocode({ 'address': originList[i] }, function(){});
+            for (var j = 0; j < results.length; j++) {
+              geocoder.geocode({ 'address': destination[j] }, function(){});
+              
+              console.log(places[j].name)
+              console.log(results[j].duration.text)
+              console.log(results[j].distance.text)
+              
+            }
+          }
+          
+        }
+      });
+      
     });
+    
+  }
+  
+  function callSearchNearby(latLng) {
+  let requestNearby = {
+    location: latLng,
+    radius: '500',
+    type: ['restaurant']
+  };
+  service.nearbySearch(requestNearby, searchCallback);
+  }
 
-  });
-
-}
-
-// //Function to call when we need to get location and center
-// function geocodeAddress(geocoder, resultsMap) {
-//   //address id is going to be replaced by id of input on form
-//   var address = document.getElementById('address').value;
-//   geocoder.geocode({ 'address': address }, function (results, status) {
-//     if (status === 'OK') {
-//       resultsMap.setCenter(results[0].geometry.location);
-//       var marker = new google.maps.Marker({
-//         map: resultsMap,
-//         position: results[0].geometry.location
-//       });
-//     } else {
-//       alert('Geocode was not successful for the following reason: ' + status);
-//     }
-//   });
-// }
-
-function searchCallback(results, status) {
-  if (status == google.maps.places.PlacesServiceStatus.OK) {
-    for (var i = 0; i < results.length; i++) {
-      let request = {
-        placeId: results[i].place_id,
+  function searchCallback(results, status) {
+    if (status == google.maps.places.PlacesServiceStatus.OK) {
+      for (var i = 0; i < results.length; i++) {
+        let request = {
+          placeId: results[i].place_id,
         fields: ['name', 'rating', 'formatted_address']
       };
       service.getDetails(request, makeDetailCallback(places));
