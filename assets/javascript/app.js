@@ -69,14 +69,12 @@ function callGetDetails(results, status) {
       // service.getDetails(request, makeDetailCallback(places));
       service.getDetails(request, function(results, status) {
         detailsRequestCompletedCount += 1;
-        console.log({detailsRequestCompletedCount})
         if (status == google.maps.places.PlacesServiceStatus.OK) {
           places.push({
             name: results.name,
             address: results.formatted_address,
             rating: results.rating
           });
-          console.log(places)
         }
         if (allDetailsRequestsComplete()) {
           console.log('all details are done now. proceed.')
@@ -118,13 +116,14 @@ function getTravelTime() {
         alert('Error was: ' + status);
       } else {
         var originList = response.originAddresses;
+        let timeMax = parseInt(document.getElementById('inputTime').value);
 
-        for (var i = 0; i < originList.length; i++) {
-          var results = response.rows[i].elements;
+        var results = response.rows[0].elements;
 
-          for (var j = 0; j < results.length; j++) {
-          
-
+        $("#resultsDisplay").empty();
+        for (var j = 0; j < results.length; j++) {
+        
+          if (parseInt(results[j].duration.text) < timeMax ) {
             console.log(places[j].name)
             console.log(results[j].duration.text)
             console.log(results[j].distance.text)
@@ -133,13 +132,12 @@ function getTravelTime() {
               $("<td>").text(places[j].price),
               $("<td>").text(places[j].rating),
               $("<td>").text(results[j].duration.text),
-              $("<td>").text(places[j].address),
-              
+              $("<td>").text(places[j].address),       
             );
             //Appending all of new div to html of page
             $("#resultsDisplay").append(newRow)
-
           }
+
         }
       }
     }
