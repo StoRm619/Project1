@@ -43,6 +43,8 @@ function initMap() {
 
         geocodeAddress(currentAdd, callSearchNearby);
     });
+
+    $('#submit').on('click', filterResults);
 }
 
 function filterResults() {
@@ -54,7 +56,7 @@ function filterResults() {
 function callSearchNearby(latLng) {
     let requestNearby = {
         location: latLng,
-        radius: '3200', //in meters.
+        radius: '8000', //in meters.
         type: ['restaurant']
     };
     service.nearbySearch(requestNearby, callGetDetails);
@@ -75,14 +77,12 @@ function callGetDetails(results, status) {
             // service.getDetails(request, makeDetailCallback(places));
             service.getDetails(request, function(results, status) {
                 detailsRequestCompletedCount += 1;
-                console.log({ detailsRequestCompletedCount })
                 if (status == google.maps.places.PlacesServiceStatus.OK) {
                     places.push({
                         name: results.name,
                         address: results.formatted_address,
                         rating: results.rating
                     });
-                    console.log(places)
                 }
                 if (allDetailsRequestsComplete()) {
                     console.log('all details are done now. proceed.')
@@ -123,16 +123,16 @@ function getTravelTime() {
                 alert('Error was: ' + status);
             } else {
                 var originList = response.originAddresses;
+                let timeMax = parseInt(document.getElementById('inputTime').value);
 
-                for (var i = 0; i < originList.length; i++) {
-                    var results = response.rows[i].elements;
+                var results = response.rows[0].elements;
 
-                    for (var j = 0; j < results.length; j++) {
+                $("#resultsDisplay").empty();
+                for (var j = 0; j < results.length; j++) {
 
-
+                    if (parseInt(results[j].duration.text) < timeMax) {
                         console.log(places[j].name)
                         console.log(results[j].duration.text)
-
                         console.log(results[j].distance.text)
                         var newRow = $("<tr>").append(
                             $("<td>").text(places[j].name),
@@ -140,12 +140,11 @@ function getTravelTime() {
                             $("<td>").text(places[j].rating),
                             $("<td>").text(results[j].duration.text),
                             $("<td>").text(places[j].address),
-
                         );
                         //Appending all of new div to html of page
                         $("#resultsDisplay").append(newRow)
-
                     }
+
                 }
             }
         }
