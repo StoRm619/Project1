@@ -67,33 +67,6 @@ function initMap() {
       service.nearbySearch(requestNearby, searchCallback);
     });
 
-    // // Clear out the old markers.
-    // markers.forEach(function(marker) {
-    //   marker.setMap(null);
-    // });
-    // markers = [];
-
-    // // For each place, get the icon, name and location.
-    // places.forEach(function(place) {
-    //   if (!place.geometry) {
-    //     console.log("Returned place contains no geometry");
-    //     return;
-    //   }
-    //   var icon = {
-    //     url: place.icon,
-    //     size: new google.maps.Size(71, 71),
-    //     origin: new google.maps.Point(0, 0),
-    //     anchor: new google.maps.Point(17, 34),
-    //     scaledSize: new google.maps.Size(25, 25)
-    //   };
-
-    //   // Create a marker for each place.
-    //   markers.push(new google.maps.Marker({
-    //     map: map,
-    //     icon: icon,
-    //     title: place.name,
-    //     position: place.geometry.location
-    //   }));
 
     var origin = currentAdd
 
@@ -142,22 +115,22 @@ function initMap() {
 
 }
 
-//Function to call when we need to get location and center
-function geocodeAddress(geocoder, resultsMap) {
-  //address id is going to be replaced by id of input on form
-  var address = document.getElementById('address').value;
-  geocoder.geocode({ 'address': address }, function (results, status) {
-    if (status === 'OK') {
-      resultsMap.setCenter(results[0].geometry.location);
-      var marker = new google.maps.Marker({
-        map: resultsMap,
-        position: results[0].geometry.location
-      });
-    } else {
-      alert('Geocode was not successful for the following reason: ' + status);
-    }
-  });
-}
+// //Function to call when we need to get location and center
+// function geocodeAddress(geocoder, resultsMap) {
+//   //address id is going to be replaced by id of input on form
+//   var address = document.getElementById('address').value;
+//   geocoder.geocode({ 'address': address }, function (results, status) {
+//     if (status === 'OK') {
+//       resultsMap.setCenter(results[0].geometry.location);
+//       var marker = new google.maps.Marker({
+//         map: resultsMap,
+//         position: results[0].geometry.location
+//       });
+//     } else {
+//       alert('Geocode was not successful for the following reason: ' + status);
+//     }
+//   });
+// }
 
 function searchCallback(results, status) {
   if (status == google.maps.places.PlacesServiceStatus.OK) {
@@ -171,27 +144,6 @@ function searchCallback(results, status) {
     console.log('SearchCallback, places:', places);
   }
 }
-
-
-// We've implemented this different way. Just saving for now.
-
-// //Function to call when we need to get location and center
-// function geocodeAddress(geocoder, resultsMap) {
-//   //address id is going to be replaced by id of input on form
-// var address = document.getElementById('address').value;
-// geocoder.geocode({'address': address}, function(results, status) {
-//   if (status === 'OK') {
-//     resultsMap.setCenter(results[0].geometry.location);
-//     var marker = new google.maps.Marker({
-//       map: resultsMap,
-//       position: results[0].geometry.location
-//     });
-//   } else {
-//     alert('Geocode was not successful for the following reason: ' + status);
-//   }
-// });
-// }
-
 
 // Modifies places by adding details to passin in placesToModify argument
 function makeDetailCallback(placesToModify) {
