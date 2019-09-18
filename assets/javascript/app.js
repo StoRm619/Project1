@@ -2,7 +2,8 @@ const centerInit = { lat: 32.8800604, lng: -117.2362022 };
 let infowindow;
 let places = [];
 let currentAdd = '';
-let currentLatLng = {};
+let service;
+let geocoder;
 
 function initMap() {
   let map = new google.maps.Map(document.getElementById('map'), {
@@ -11,103 +12,99 @@ function initMap() {
     mapTypeId: 'roadmap'
   });
 
-  var request = {
-    location: centerInit,
-    radius: '500',
-    type: ['restaurant']
-  };
-
   service = new google.maps.places.PlacesService(map);
-  service.nearbySearch(request, searchCallback);
-
-  //Call geocoder function and center on submit once address placed
-  var geocoder = new google.maps.Geocoder();
-
-  //submit id will be replaced by id of submit button on form
-  document.getElementById('submit').addEventListener('click', function () {
-    // geocodeAddress(geocoder, map);
-  });
-
+  geocoder = new google.maps.Geocoder();
   // Create the search box and link it to the UI element.
   var input = document.getElementById('pac-input');
   var searchBox = new google.maps.places.SearchBox(input);
 
-
   // Bias the SearchBox results towards current map's viewport.
-  map.addListener('bounds_changed', function () {
+  map.addListener('bounds_changed', function() {
     searchBox.setBounds(map.getBounds());
   });
-
 
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
 
-  searchBox.addListener('places_changed', function () {
+  searchBox.addListener('places_changed', function() {
     let currentLocInput = searchBox.getPlaces();
 
-    if (currentLocInput.length == 0)
-      return;
+    if (currentLocInput.length == 0) return;
 
     currentAdd = currentLocInput[0].formatted_address;
+    console.log({currentAdd})
     let currentGeo = currentLocInput[0].geometry;
+
+
     let bounds = new google.maps.LatLngBounds();
-    if (currentGeo.viewport)
-      bounds.union(currentGeo.viewport);
-    else
-      bounds.extend(currentGeo.location);
+    if (currentGeo.viewport) bounds.union(currentGeo.viewport);
+    else bounds.extend(currentGeo.location);
     map.fitBounds(bounds);
 
+    geocodeAddress(currentAdd, callSearchNearby);
+  });
+}
 
-    geocodeAddress(currentAdd, function (latLng) {
-      let requestNearby = {
-        location: latLng,
-        radius: '500',
-        type: ['restaurant']
+function callSearchNearby(latLng) {
+  let requestNearby = {
+    location: latLng,
+    radius: '8000', //in meters.
+    type: ['restaurant']
+  };
+  service.nearbySearch(requestNearby, callGetDetails);
+}
+
+function callGetDetails(results, status) {
+  if (status == google.maps.places.PlacesServiceStatus.OK) {
+    // controle asyncronous place details requests with the following values
+    let detailsRequestCompletedCount = 0;
+    let allDetailsRequestsComplete = () =>
+    detailsRequestCompletedCount === results.length;
+    places = [];
+    for (var i = 0; i < results.length; i++) {
+      let request = {
+        placeId: results[i].place_id,
+        fields: ['name', 'rating', 'formatted_address']
       };
-      service.nearbySearch(requestNearby, searchCallback);
-    });
+      // service.getDetails(request, makeDetailCallback(places));
+      service.getDetails(request, function(results, status) {
+        detailsRequestCompletedCount += 1;
+        console.log({detailsRequestCompletedCount})
+        if (status == google.maps.places.PlacesServiceStatus.OK) {
+          places.push({
+            name: results.name,
+            address: results.formatted_address,
+            rating: results.rating
+          });
+          console.log(places)
+        }
+        if (allDetailsRequestsComplete()) {
+          console.log('all details are done now. proceed.')
 
-    // // Clear out the old markers.
-    // markers.forEach(function(marker) {
-    //   marker.setMap(null);
-    // });
-    // markers = [];
-
-    // // For each place, get the icon, name and location.
-    // places.forEach(function(place) {
-    //   if (!place.geometry) {
-    //     console.log("Returned place contains no geometry");
-    //     return;
-    //   }
-    //   var icon = {
-    //     url: place.icon,
-    //     size: new google.maps.Size(71, 71),
-    //     origin: new google.maps.Point(0, 0),
-    //     anchor: new google.maps.Point(17, 34),
-    //     scaledSize: new google.maps.Size(25, 25)
-    //   };
-
-    //   // Create a marker for each place.
-    //   markers.push(new google.maps.Marker({
-    //     map: map,
-    //     icon: icon,
-    //     title: place.name,
-    //     position: place.geometry.location
-    //   }));
-
-    var origin = currentAdd
-
-    //Pushing address values into destinations array for distance matrix calculations
-    var destination = [];
-    for (var h = 0; h < places.length; h++) {
-      destination.push(places[h].address)
+          getTravelTime();
+        }
+      });
     }
+    console.log('SearchCallback, places:', places);
+  }
+}
 
-    var selectTransporatation = document.getElementById("methodTransportation")
-    var userSelectMode = selectTransporatation.options[selectTransporatation.selectedIndex].value;
+function getTravelTime() {
+  var origin = currentAdd;
 
-    var service2 = new google.maps.DistanceMatrixService;
-    service2.getDistanceMatrix({
+  //Pushing address values into destinations array for distance matrix calculations
+  var destination = [];
+  for (var h = 0; h < places.length; h++) {
+    destination.push(places[h].address);
+  }
+
+  var selectTransporatation = document.getElementById('methodTransportation');
+  var userSelectMode =
+    selectTransporatation.options[selectTransporatation.selectedIndex].value;
+
+  var service2 = new google.maps.DistanceMatrixService();
+  service2.getDistanceMatrix(
+    {
       origins: [origin],
       destinations: destination,
 
@@ -115,8 +112,8 @@ function initMap() {
       unitSystem: google.maps.UnitSystem.METRIC,
       avoidHighways: false,
       avoidTolls: false
-    }, function (response, status) {
-
+    },
+    function(response, status) {
       if (status !== 'OK') {
         alert('Error was: ' + status);
       } else {
@@ -124,9 +121,9 @@ function initMap() {
 
         for (var i = 0; i < originList.length; i++) {
           var results = response.rows[i].elements;
-          geocoder.geocode({ 'address': originList[i] }, function () { });
+
           for (var j = 0; j < results.length; j++) {
-            geocoder.geocode({ 'address': destination[j] }, function () { });
+          
 
             console.log(places[j].name)
             console.log(results[j].duration.text)
@@ -142,94 +139,20 @@ function initMap() {
             //Appending all of new div to html of page
             $("#resultsDisplay").append(newRow)
 
-
-
-
-
           }
         }
-
       }
-    });
-
-  });
-
-}
-
-//Function to call when we need to get location and center
-function geocodeAddress(geocoder, resultsMap) {
-  //address id is going to be replaced by id of input on form
-  var address = document.getElementById('address').value;
-  geocoder.geocode({ 'address': address }, function (results, status) {
-    if (status === 'OK') {
-      resultsMap.setCenter(results[0].geometry.location);
-      var marker = new google.maps.Marker({
-        map: resultsMap,
-        position: results[0].geometry.location
-      });
-    } else {
-      alert('Geocode was not successful for the following reason: ' + status);
     }
-  });
-}
-
-function searchCallback(results, status) {
-  if (status == google.maps.places.PlacesServiceStatus.OK) {
-    for (var i = 0; i < results.length; i++) {
-      let request = {
-        placeId: results[i].place_id,
-        fields: ['name', 'rating', 'formatted_address', 'photo', 'price_level', 'url']
-      };
-      service.getDetails(request, makeDetailCallback(places));
-    }
-    console.log('SearchCallback, places:', places);
-  }
-}
-
-
-// We've implemented this different way. Just saving for now.
-
-// //Function to call when we need to get location and center
-// function geocodeAddress(geocoder, resultsMap) {
-//   //address id is going to be replaced by id of input on form
-// var address = document.getElementById('address').value;
-// geocoder.geocode({'address': address}, function(results, status) {
-//   if (status === 'OK') {
-//     resultsMap.setCenter(results[0].geometry.location);
-//     var marker = new google.maps.Marker({
-//       map: resultsMap,
-//       position: results[0].geometry.location
-//     });
-//   } else {
-//     alert('Geocode was not successful for the following reason: ' + status);
-//   }
-// });
-// }
-
-
-// Modifies places by adding details to passin in placesToModify argument
-function makeDetailCallback(placesToModify) {
-  return function detailCallback(results, status) {
-    if (status == google.maps.places.PlacesServiceStatus.OK)
-      placesToModify.push({
-        name: results.name,
-        address: results.formatted_address,
-        rating: results.rating,
-        price: results.price_level,
-        url: results.url
-      });
-  }
-}
+  );
+};
 
 function geocodeAddress(address, callback) {
-  var geocoder = new google.maps.Geocoder();
-  geocoder.geocode({ 'address': address }, function (results, status) {
+  // var geocoder = new google.maps.Geocoder();
+  geocoder.geocode({ address: address }, function(results, status) {
     if (status === 'OK') {
-      currentLatLng = results[0].geometry.location;
-      console.log('Geocoding: ', currentLatLng);
+      let currentLatLng = results[0].geometry.location;
+      console.log('Geocoding: ', {lat: currentLatLng.lat(), lng: currentLatLng.lng() });
       callback(currentLatLng);
-    }
-    else
-      alert('Geocode was not successful for the following reason: ' + status);
+    } else alert('Geocode was not successful for the following reason: ' + status);
   });
 }
